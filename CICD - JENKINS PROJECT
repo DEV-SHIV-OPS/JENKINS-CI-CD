@@ -18,8 +18,7 @@ Enable webhooks to trigger Jenkins jobs on commits.
 3️⃣ Jenkins Pipeline Setup (Jenkinsfile)
 
 groovy
-Copy
-Edit
+
 pipeline {
     agent any
     tools {
