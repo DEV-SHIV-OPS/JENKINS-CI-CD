@@ -1,0 +1,71 @@
+Project 1: Simple CI/CD Pipeline for Java (Spring Boot) Using Jenkins
+🔹 Tech Stack: Jenkins, Maven, Git, Docker, AWS EC2
+🔹 Goal: Automate the build, test, and deployment of a Spring Boot Java application using Jenkins.
+
+Steps to Implement:
+1️⃣ Install & Configure Jenkins
+
+Install Jenkins on an AWS EC2 instance (or use a local machine).
+
+Install necessary plugins: Git, Pipeline, Maven, Docker, SSH.
+
+2️⃣ Set Up GitHub Repository
+
+Push your Java (Spring Boot) project to GitHub.
+
+Enable webhooks to trigger Jenkins jobs on commits.
+
+3️⃣ Jenkins Pipeline Setup (Jenkinsfile)
+
+groovy
+Copy
+Edit
+pipeline {
+    agent any
+    tools {
+        maven 'Maven3'   // Make sure Maven is installed
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/your-repo/java-app.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t my-java-app .'
+            }
+        }
+        stage('Push to Docker Hub') {
+            steps {
+                withDockerRegistry([credentialsId: 'docker-hub-cred']) {
+                    sh 'docker push my-java-app:latest'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sshagent(['ec2-server-cred']) {
+                    sh 'ssh ec2-user@your-ec2-ip "docker run -d -p 8080:8080 my-java-app"'
+                }
+            }
+        }
+    }
+}
+4️⃣ Run & Test the Pipeline
+
+Trigger the pipeline by pushing code to GitHub.
+
+Check the logs in Jenkins to verify build and deployment.
+
+Access the Java app at http://your-ec2-ip:8080.
